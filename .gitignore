@@ -1,0 +1,9 @@
+# Talos-generated files contain cluster CA keys and admin credentials.
+# Only the SOPS-encrypted secrets file (talos/secrets.sops.yaml) is committed.
+talos/secrets.yaml
+talos/talosconfig
+talos/controlplane.yaml
+talos/worker.yaml
+talos/_out/
+kubeconfig
+*.agekey
