@@ -1,0 +1,11 @@
+# Single node = control plane AND worker.
+# - Remove the NoSchedule taint so ordinary workloads can run here.
+# - Remove the exclude-from-external-load-balancers label: MetalLB honours it,
+#   and on a one-node cluster it would never announce LoadBalancer IPs.
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+taints:
+  $patch: delete
+labels:
+  node.kubernetes.io/exclude-from-external-load-balancers:
+    $patch: delete

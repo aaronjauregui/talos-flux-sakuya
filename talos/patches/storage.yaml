@@ -1,0 +1,18 @@
+# Split the 100 GB disk: cap EPHEMERAL (/var: images, logs, emptyDirs, etcd)
+# and give the rest to a user volume for PersistentVolumes. A full /var can
+# take the node down; a full PV volume only hurts the app that filled it.
+# This can't be changed later without wiping, so decide at install time.
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+provisioning:
+  maxSize: 40GiB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-storage   # mounted at /var/mnt/local-storage
+provisioning:
+  diskSelector:
+    match: system_disk
+  minSize: 50GiB
+  grow: true
