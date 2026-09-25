@@ -2,6 +2,8 @@
 # Render Talos machine configs from secrets + patches. Outputs are gitignored.
 set -euo pipefail
 cd "$(dirname "$0")"
+# secrets.yaml is gitignored; recreate it from the SOPS-encrypted copy if needed.
+[ -f secrets.yaml ] || { sops decrypt secrets.sops.yaml > secrets.yaml; chmod 600 secrets.yaml; }
 talosctl gen config sakuya https://sakuya.kinoko.house:6443 \
   --with-secrets secrets.yaml \
   --additional-sans sakuya.kinoko.house,192.168.1.26 \

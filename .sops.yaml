@@ -1,0 +1,10 @@
+# SOPS encryption rules. Private key: ~/.config/sops/age/keys.txt (backed up
+# offline) and the "sops-age" Secret in flux-system for Flux to decrypt.
+creation_rules:
+  # Talos root of trust: encrypt every value.
+  - path_regex: talos/secrets\.sops\.yaml$
+    age: age1wc25hzukg6m707hyp7xll3nmv4sg6gtxvql7x3jr4qrp3u7ykf6qreqjc4
+  # Kubernetes Secrets: encrypt only the payload so kind/metadata stay readable.
+  - path_regex: .*\.sops\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: age1wc25hzukg6m707hyp7xll3nmv4sg6gtxvql7x3jr4qrp3u7ykf6qreqjc4
