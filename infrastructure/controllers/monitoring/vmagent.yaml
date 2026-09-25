@@ -1,0 +1,93 @@
+# vmagent: scrapes everything in the cluster and pushes it to VictoriaMetrics
+# on satori. Push, so satori never needs to reach into the cluster.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vmagent
+  namespace: monitoring
+spec:
+  interval: 1h
+  dependsOn:
+    - name: kube-state-metrics
+    - name: node-exporter
+  chart:
+    spec:
+      chart: victoria-metrics-agent
+      version: 0.48.0  # vmagent v1.152.0
+      sourceRef:
+        kind: HelmRepository
+        name: vm
+  values:
+    remoteWrite:
+      - url: http://satori.kinoko.house:8428/api/v1/write
+    resources:
+      requests: {cpu: 50m, memory: 128Mi}
+      limits: {memory: 512Mi}
+    config:
+      global:
+        scrape_interval: 30s
+        # Stamped on every series we send: cluster data is always {cluster="sakuya"},
+        # everything else in satori's VM has no cluster label (matches cluster="").
+        external_labels:
+          cluster: sakuya
+      # Replaces the chart's long default list (lists aren't merged).
+      scrape_configs:
+        - job_name: vmagent
+          static_configs:
+            - targets: [localhost:8429]
+
+        - job_name: kube-state-metrics
+          static_configs:
+            - targets: [kube-state-metrics.monitoring.svc:8080]
+
+        # Same job name as satori's node_exporter scrapes, so HostDown & co. apply.
+        - job_name: node
+          kubernetes_sd_configs:
+            - role: node
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_node_address_InternalIP]
+              target_label: __address__
+              replacement: $1:9100
+            # Match the naming of the other hosts (cirno.kinoko.house:9100).
+            - source_labels: [__meta_kubernetes_node_name]
+              target_label: instance
+              replacement: $1.kinoko.house:9100
+
+        # Per-container CPU/memory from the kubelet's built-in cAdvisor, scraped on
+        # the kubelet port directly. Needs only RBAC nodes/metrics; the alternative
+        # (API server proxy) needs nodes/proxy, which also allows exec into any pod.
+        # Talos' kubelet serving cert is self-signed, hence no verification.
+        - job_name: kubelet-cadvisor
+          scheme: https
+          metrics_path: /metrics/cadvisor
+          tls_config:
+            insecure_skip_verify: true
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          kubernetes_sd_configs:
+            - role: node
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_node_address_InternalIP]
+              target_label: __address__
+              replacement: $1:10250
+            - source_labels: [__meta_kubernetes_node_name]
+              target_label: instance
+          # cAdvisor exposes a lot of series per container; keep what we use.
+          metric_relabel_configs:
+            - source_labels: [__name__]
+              action: keep
+              regex: container_(cpu_usage_seconds_total|memory_working_set_bytes|cpu_cfs_(throttled_)?periods_total|network_(receive|transmit)_bytes_total|oom_events_total)
+
+        # CloudNativePG instances expose Postgres metrics on the port named "metrics" (9187).
+        - job_name: cnpg
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_label_cnpg_io_cluster, __meta_kubernetes_pod_container_port_name]
+              action: keep
+              regex: .+;metrics
+            - source_labels: [__meta_kubernetes_namespace]
+              target_label: namespace
+            - source_labels: [__meta_kubernetes_pod_name]
+              target_label: pod
+            - source_labels: [__meta_kubernetes_pod_label_cnpg_io_cluster]
+              target_label: cnpg_cluster
