@@ -4,5 +4,6 @@ metadata:
   name: lan
   namespace: metallb-system
 spec:
+  # Outside the router's DHCP pool (192.168.1.6-220). ARP-checked empty 2026-09-25.
   addresses:
-    - 192.168.1.200-192.168.1.210
+    - 192.168.1.230-192.168.1.239
