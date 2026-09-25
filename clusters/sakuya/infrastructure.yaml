@@ -1,9 +1,45 @@
+# Gateway API CRDs, straight from the upstream release tag. Traefik's chart
+# creates a Gateway, so these must exist before infra-controllers runs.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: gateway-api
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://github.com/kubernetes-sigs/gateway-api
+  ref:
+    tag: v1.6.1  # the version Traefik v3.7 supports
+  ignore: |
+    /*
+    !/config/crd/standard/
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infra-crds
+  namespace: flux-system
+spec:
+  interval: 1h
+  retryInterval: 1m
+  path: ./config/crd/standard
+  # Deleting a CRD deletes every object of that kind in the cluster; never let
+  # a rename or path mistake do that.
+  prune: false
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: gateway-api
+---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: infra-controllers
   namespace: flux-system
 spec:
+  dependsOn:
+    - name: infra-crds
   interval: 10m
   retryInterval: 1m
   path: ./infrastructure/controllers
