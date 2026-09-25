@@ -1,0 +1,45 @@
+# Renders the week (Nextcloud calendars + Open-Meteo weather) to a PNG and
+# uploads it to R2 for the e-ink display. Stateless: every run starts from
+# scratch; weather_cache.json can't be written (read-only root), which only
+# costs the same-day fallback when Open-Meteo is down.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: eink-cal
+  namespace: eink-cal
+spec:
+  schedule: "*/15 * * * *"
+  timeZone: Australia/Sydney
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 300  # a run later than this is superseded by the next one
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0  # the next scheduled run (<=15 min) is the retry
+      activeDeadlineSeconds: 300
+      template:
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
+            seccompProfile: {type: RuntimeDefault}
+          containers:
+            - name: eink-cal
+              image: nitori.kinoko.house:3000/aaron/eink-cal:21456dc
+              envFrom:
+                - secretRef: {name: eink-cal-env}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: [ALL]}
+              resources:
+                requests: {cpu: 50m, memory: 128Mi}
+                limits: {memory: 256Mi}
+              volumeMounts:
+                - {name: tmp, mountPath: /tmp}  # OUTPUT=/tmp/calendar.png
+          volumes:
+            - name: tmp
+              emptyDir: {sizeLimit: 16Mi}
