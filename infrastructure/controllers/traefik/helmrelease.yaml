@@ -31,6 +31,18 @@ spec:
           protocol: HTTP
           namespacePolicy:
             from: All
+        # HTTPS with the wildcard cert from infrastructure/configs/traefik
+        # (cert-manager, DNS-01). Until the Secret exists the listener just
+        # reports ResolvedRefs=False; nothing else breaks.
+        websecure:
+          port: 8443
+          protocol: HTTPS
+          hostname: "*.sakuya.kinoko.house"
+          namespacePolicy:
+            from: All
+          certificateRefs:
+            - kind: Secret
+              name: sakuya-wildcard-tls
     service:
       annotations:
         metallb.io/loadBalancerIPs: 192.168.1.230
