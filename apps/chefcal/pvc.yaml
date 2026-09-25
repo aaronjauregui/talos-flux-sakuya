@@ -1,0 +1,13 @@
+# chefcal's state: data/weeks.json (generated weeks). -push reconciles the
+# calendar to this file, so losing it re-rolls weeks already on the calendar.
+# local-path does not enforce the size; it's a directory on sda7.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chefcal-data
+  namespace: chefcal
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 64Mi

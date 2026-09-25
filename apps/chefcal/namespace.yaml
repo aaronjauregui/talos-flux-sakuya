@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: chefcal
+  labels:
+    # Enforce (not just warn) the strictest Pod Security level: the CronJob
+    # must run non-root, no capabilities, seccomp RuntimeDefault.
+    pod-security.kubernetes.io/enforce: restricted
