@@ -4,6 +4,3 @@ resources:
   - namespace.yaml
   - helmrepository.yaml
   - helmrelease.yaml
-  # WRONG ON PURPOSE (Phase 3 demo): this CR needs CRDs that the HelmRelease
-  # above hasn't installed yet. Moves to infrastructure/configs/ next.
-  - ipaddresspool.yaml
