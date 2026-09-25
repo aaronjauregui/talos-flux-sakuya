@@ -5,3 +5,13 @@ resources:
   - helmrepositories.yaml
   - exporters.yaml
   - vmagent.yaml
+  - vmalert.yaml
+configMapGenerator:
+  - name: vmalert-rules
+    namespace: monitoring
+    files:
+      - alert-rules.yaml
+    options:
+      # The HelmRelease refers to this name; a hash suffix would break that.
+      # vmalert re-reads the file itself (configCheckInterval).
+      disableNameSuffixHash: true

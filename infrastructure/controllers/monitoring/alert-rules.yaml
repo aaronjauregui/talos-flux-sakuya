@@ -1,0 +1,66 @@
+# Alert rules for the sakuya cluster, evaluated by the in-cluster vmalert
+# against satori's VictoriaMetrics. Host-level rules (HighCPU, DiskFillingUp,
+# ...) stay on satori and cover sakuya via job="node".
+groups:
+  - name: sakuya-cronjobs
+    rules:
+      # "Time since the last success", not "a failed Job exists": failed Job
+      # objects are kept by failedJobsHistoryLimit even after later runs
+      # succeed, so kube_job_status_failed > 0 would never resolve.
+      # `or kube_cronjob_created` covers CronJobs that have never succeeded.
+      - alert: CronJobNotSucceeding
+        expr: |
+          time() - max by (namespace, cronjob) (
+            kube_cronjob_status_last_successful_time{cluster="sakuya", namespace="eink-cal"}
+            or kube_cronjob_created{cluster="sakuya", namespace="eink-cal"}
+          ) > 3600
+        labels: {severity: warning}
+        annotations:
+          summary: "{{ $labels.namespace }}/{{ $labels.cronjob }}: no successful run for {{ $value | humanizeDuration }} (runs every 15 min)"
+      - alert: CronJobNotSucceeding
+        expr: |
+          time() - max by (namespace, cronjob) (
+            kube_cronjob_status_last_successful_time{cluster="sakuya", namespace="chefcal"}
+            or kube_cronjob_created{cluster="sakuya", namespace="chefcal"}
+          ) > 8 * 86400
+        labels: {severity: warning}
+        annotations:
+          summary: "{{ $labels.namespace }}/{{ $labels.cronjob }}: no successful run for {{ $value | humanizeDuration }} (runs weekly)"
+
+  - name: sakuya-pods
+    rules:
+      - alert: PodRestarting
+        expr: increase(kube_pod_container_status_restarts_total{cluster="sakuya"}[30m]) > 3
+        labels: {severity: warning}
+        annotations:
+          summary: "{{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) restarted {{ $value | printf \"%.0f\" }}x in 30m"
+
+  - name: sakuya-postgres
+    rules:
+      # Phase 5: archiving failed 7 times during the plugin rollout and nobody
+      # was told. Last failure newer than last success = currently failing.
+      - alert: PostgresWALArchivingFailing
+        expr: |
+          cnpg_pg_stat_archiver_last_failed_time{cluster="sakuya"}
+            > cnpg_pg_stat_archiver_last_archived_time{cluster="sakuya"}
+        for: 10m
+        labels: {severity: critical}
+        annotations:
+          summary: "{{ $labels.namespace }}/{{ $labels.pod }}: WAL archiving to R2 is failing (PITR window not growing)"
+      # Backups go through the Barman Cloud plugin, which reports under its own
+      # prefix. The in-tree cnpg_collector_last_available_backup_timestamp is 0
+      # here and would make this fire forever ("last backup 56 years ago").
+      - alert: PostgresBackupTooOld
+        expr: |
+          time() - max by (namespace, cnpg_cluster) (
+            barman_cloud_cloudnative_pg_io_last_available_backup_timestamp{cluster="sakuya"}
+          ) > 26 * 3600
+        labels: {severity: warning}
+        annotations:
+          summary: "{{ $labels.namespace }}/{{ $labels.cnpg_cluster }}: last base backup {{ $value | humanizeDuration }} ago (daily at 03:00)"
+      - alert: PostgresNoStreamingReplica
+        expr: max by (namespace, cnpg_cluster) (cnpg_pg_replication_streaming_replicas{cluster="sakuya"}) < 1
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "{{ $labels.namespace }}/{{ $labels.cnpg_cluster }}: no replica is streaming from the primary"
