@@ -1,0 +1,15 @@
+# One wildcard cert for every app under sakuya.kinoko.house, used by the
+# Gateway's websecure listener. Lives next to the Gateway (traefik namespace):
+# certificateRefs to other namespaces would need a ReferenceGrant.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sakuya-wildcard
+  namespace: traefik
+spec:
+  secretName: sakuya-wildcard-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-staging
+  dnsNames:
+    - "*.sakuya.kinoko.house"
