@@ -1,0 +1,15 @@
+# Playground Postgres for learning CNPG (failover, backups). Two instances on
+# one node is not HA; it's here to watch the operator promote a replica.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-demo
+  namespace: pg-demo
+spec:
+  instances: 2
+  storage:
+    size: 2Gi  # StorageClass omitted -> default (local-path)
+  bootstrap:
+    initdb:
+      database: app
+      owner: app  # operator generates the password into Secret pg-demo-app
