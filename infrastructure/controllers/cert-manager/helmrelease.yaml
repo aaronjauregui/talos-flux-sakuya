@@ -1,0 +1,45 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: cert-manager
+      version: v1.21.2
+      sourceRef:
+        kind: HelmRepository
+        name: jetstack
+  values:
+    crds:
+      # The chart installs the CRDs; keep them if the release is ever removed,
+      # since deleting a CRD deletes every Certificate/Issuer with it.
+      enabled: true
+      keep: true
+---
+# DNS-01 solver for Porkbun (cert-manager has no built-in Porkbun support).
+# It runs as an extension API server that cert-manager calls with
+# "present/cleanup this TXT record"; it holds the Porkbun API key.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: porkbun-webhook
+  namespace: cert-manager
+spec:
+  interval: 1h
+  # Its chart creates cert-manager Issuer/Certificate objects for its own
+  # serving cert, so cert-manager (and its CRDs) must be installed first.
+  dependsOn:
+    - name: cert-manager
+  chart:
+    spec:
+      chart: porkbun-webhook
+      version: 0.1.5
+      sourceRef:
+        kind: HelmRepository
+        name: porkbun-webhook
+  values:
+    # API group the ClusterIssuer's webhook stanza refers to.
+    groupName: acme.kinoko.house

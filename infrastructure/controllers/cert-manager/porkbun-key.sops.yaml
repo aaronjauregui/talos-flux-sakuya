@@ -1,0 +1,26 @@
+# Porkbun API key (account-wide: can edit DNS for every domain with
+# "API Access" enabled). Edit with `sops edit`, never in plaintext.
+apiVersion: v1
+kind: Secret
+metadata:
+    name: porkbun-key
+    namespace: cert-manager
+type: Opaque
+stringData:
+    api-key: ENC[AES256_GCM,data:RUHadfU9DbtWE5RY+r0NbmT/hlar7HbTy/VWbLBpqD0E/9Vl33iwJPgVyWupFd13kg2W8MkgTCO2vfGnSdlYRlZHJcE=,iv:9xtOCdEXKKMxP74hMgKVVqBH/+fa19dsNuwoO34hsLQ=,tag:7C7XGjH805flW+LeW5Spqg==,type:str]
+    secret-key: ENC[AES256_GCM,data:rvspzB7XsymJRPQrA/l3EHrPrItF2u/VFvQE/0HfhYCFsZMrNYTol6zagBTBCyMha6cmw5exd9+77jZChx4BSXqfsNE=,iv:+bXytp1D+WDGKZFc7Au0BnW6C8yY+0FEZ2b6SFiInTw=,tag:7e3IE5DfKoSra26nOi+u6Q==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB3Q05JNFhSc3I0dGNIcHlM
+            VTkzdGxIN1krQlY0ZFlFYkZpeExVL29kQUNjCldXeU02MGMrTllMWEc3MVk1elRU
+            WGFFYlAzLzhpeEh4RFZsUVZtNWdYYkkKLS0tIGR0azA1bkU2ZHhrVjNOYmpaUDMv
+            b3RYcm55NG5HL2wxUjJXcWVjZm1SaVkKISM0oqwf+RiUt0UvW6W+/gWU0KDcgdkO
+            MsKmMKuTc4GmqvQPDQi98pHGzoimdOPhm/kf854snzcTyyZB39OqoQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1wc25hzukg6m707hyp7xll3nmv4sg6gtxvql7x3jr4qrp3u7ykf6qreqjc4
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-09-25T07:15:46Z"
+    mac: ENC[AES256_GCM,data:aOHI0g0Fj9oHFsk00E/6YQcmsO36b7o1XSMxG66r1OMcPVoXE64Byu63tMgjMJohM2pm1wVvcgn54itgkq1ovvvX9fdFrG2g2nbm20fTFhe9Zeoz87/sjzmddPkK7qUFaRtFKm2GSgFq2NUMOu2O6ofvvJA1zlfIRRay+fCylE4=,iv:na3mGoPMhvtCLuGOuQz1PVzn+44zILJoXZ1mR6wIlSQ=,tag:U7k64mWcIcqgvNE+3AKsTg==,type:str]
+    version: 3.13.3
