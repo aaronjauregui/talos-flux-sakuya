@@ -1,0 +1,25 @@
+# Where pg-demo's backups go: base backups + WAL in the R2 bucket, under
+# s3://sakuya-cnpg/<cluster name>/. Read by the barman-cloud plugin.
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: r2
+  namespace: pg-demo
+spec:
+  retentionPolicy: 7d
+  configuration:
+    destinationPath: s3://sakuya-cnpg/
+    endpointURL: https://d63a93faabb96f2841f5054bf10d0e94.r2.cloudflarestorage.com
+    s3Credentials:
+      accessKeyId:
+        name: r2-creds
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: r2-creds
+        key: ACCESS_SECRET_KEY
+    # 16 MB WAL segments closed early by archive_timeout (5 min) are mostly
+    # zeros; gzip keeps them small. Watch bucket size vs the R2 free 10 GB.
+    wal:
+      compression: gzip
+    data:
+      compression: gzip

@@ -1,0 +1,24 @@
+# R2 API token scoped to the sakuya-cnpg bucket (Object Read & Write).
+apiVersion: v1
+kind: Secret
+metadata:
+    name: r2-creds
+    namespace: pg-demo
+stringData:
+    ACCESS_KEY_ID: ENC[AES256_GCM,data:X/HbnM3V+HVJVF7pe9zkYw4w/cXlSjeG2MuyvpBuLKM=,iv:K1ieC6q3esQLLqVf95NfOPUz/Yo61TufhhelZINSTrE=,tag:WyUaNK48hiIG7PAqCXZc6Q==,type:str]
+    ACCESS_SECRET_KEY: ENC[AES256_GCM,data:MZOjeNs53RHVhfktAcHoaoMYcWepY6pUwfj18bi6YhLhNFQYGuJdqL8IvAFE9XcFMHuMuKcU/NdxuRxt73XkKA==,iv:OcG8Tj7Y6j0VdTJZBsdQx/wEOpWx1peEwse7eBhlxtY=,tag:xepsTwNGg5dCYTGpbY+QOQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPUU8vNksvQ3NzNlFvb2I1
+            ZmdRUkRoNGxFS3V6WndrTkZXd3d2Y1plRHlJCnVkVnRpUnVKY1RyWXd2VnJQclJw
+            UGV5cEtpbVJKZkpqeHdJNmt6TmxjQkkKLS0tIFFNTXB1eG95bXZyVGpUZVNDSXBM
+            VmhRdnozK2pxdEJNWUhWR05nM0R4QTgKU0bNiooQ6EBlNVBBFfaQULMJvN7QJAOe
+            +EjiAeoJp45Pdbu19A65f9r+xZxLbIEXw5raczGkQ2pCuY/n9MbIHQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1wc25hzukg6m707hyp7xll3nmv4sg6gtxvql7x3jr4qrp3u7ykf6qreqjc4
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-09-25T08:13:41Z"
+    mac: ENC[AES256_GCM,data:4d9hLE6QVP4d7Ut/XVsNl72SlSXEHIohvTA53+k5OtlCmcru+ObdBwyvx15InGNLVzL4ZNPpUdgCm0/uIDafY2qt94mXeGLy8HBkEtlJOveTblsx6cxnYb2jzziqZ+xnc+E8maFs+1XKFHKgmnzDRsJ9bJBzEsSLk6DN/Om849g=,iv:3+a+S55Q3MbFZ1+ZqQI/MrA6KJAlYfWi/BtO08E+E2I=,tag:yICiLA0T9Nftkl0hHQd8YA==,type:str]
+    version: 3.13.3

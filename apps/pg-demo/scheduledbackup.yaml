@@ -1,0 +1,16 @@
+# Daily base backup at 03:00 (six-field cron: seconds first). WAL is archived
+# continuously in between; a restore = nearest base backup + replayed WAL.
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: pg-demo-daily
+  namespace: pg-demo
+spec:
+  schedule: "0 0 3 * * *"
+  immediate: true  # also take one as soon as this is created
+  backupOwnerReference: self
+  cluster:
+    name: pg-demo
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io

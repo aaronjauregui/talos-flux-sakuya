@@ -13,3 +13,10 @@ spec:
     initdb:
       database: app
       owner: app  # operator generates the password into Secret pg-demo-app
+  # Ship WAL continuously to the ObjectStore (the plugin runs as a sidecar in
+  # each instance pod).
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: r2
