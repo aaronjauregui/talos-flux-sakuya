@@ -1,0 +1,7 @@
+# Image Factory schematic for sakuya. The schematic ID is a hash of this file;
+# POST it to https://factory.talos.dev/schematics to (re)compute it.
+customization:
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/qemu-guest-agent
+      - siderolabs/netbird

@@ -1,0 +1,22 @@
+# NetBird extension config: joins the node to NetBird (netbird.cloud).
+# Setup key: non-ephemeral. Peer identity lives in /var/lib/netbird (EPHEMERAL).
+apiVersion: v1alpha1
+kind: ExtensionServiceConfig
+name: netbird
+environment:
+    - ENC[AES256_GCM,data:ItcuYLf7970iLIjsWLOKx+pJTZEN0LFgpg0eR6vfg+nsoD558gWcUyYzJGOsuXw78w==,iv:o5sqXrqWosStZPaGcrHbIWHnjj1EMzZJInzjIJeHQCw=,tag:4isylFGo9PEkvDrQfs4IJQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwcU5Ha0ZjVWRkRCtoaTlv
+            MmduMUxHMndJSGg5anhpRTVhNVJLSUg4OWs4CmhSZEJiVUkwS1puczdjV0drSkhq
+            d0pFMU5yeSs3WDBGMUIxMFZvVnNNa3MKLS0tIHN2eWRNOGtJZzFFaUU1UWIwek02
+            Ym8yQVZoZnJyd3hBWThOSXl6SGtuMFUKAa5+taZOjpcN4fD927I/RGoXvL4JUOfd
+            Ig/d0bXH+pe3p1V1GHnhF/txRiGqTeKGSzwDGy0+cbZyDDXyOwG8rg==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1wc25hzukg6m707hyp7xll3nmv4sg6gtxvql7x3jr4qrp3u7ykf6qreqjc4
+    encrypted_regex: ^environment$
+    lastmodified: "2026-09-25T06:34:51Z"
+    mac: ENC[AES256_GCM,data:yVMYSO3S7erkG47MTG9j8dxjhiRSdDBnFZjKJrvPAdRvAQxyb9KDi/7r/YB6Wty2cjIl3r8l80oSTFEcz1aGAXfv9PHpDwzmkUN0bjezzbEUQWVPg7n2QWX2VFxveUBs5lK+ttEwfjOCmecDY24dXg7H4Luxea6dmxXjHkUFS5A=,iv:bKb6Uu09kKOb6hcL1Xyp9HGA92IuwdG/A7o9lfJSnpg=,tag:6YumbKissI1SvdJf8FzcOA==,type:str]
+    version: 3.13.3

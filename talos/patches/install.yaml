@@ -1,10 +1,10 @@
-# Install to the virtio disk using the Image Factory schematic that includes
-# the qemu-guest-agent extension (same schematic as the boot ISO). Without
-# this, the installed OS would silently drop the extension.
+# Install to the virtio disk using the Image Factory schematic from
+# talos/schematic.yaml (qemu-guest-agent + netbird). Without this, the installed
+# OS would silently drop the extensions.
 apiVersion: v1alpha1
 kind: UnattendedInstallConfig
 installer:
-  image: factory.talos.dev/metal-installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v1.14.1
+  image: factory.talos.dev/metal-installer/6b089087bdbe2df70546241a00ff305587ac1f5e7ebaec05cbc4f05b2d9869e4:v1.14.1
 provisioning:
   diskSelector:
     match: disk.dev_path == "/dev/sda"

@@ -1,0 +1,13 @@
+# Pin the kubelet node IP and etcd's advertised address to the LAN. Without
+# this, a second interface (NetBird wt0, 100.81.x) is a candidate and the
+# cluster could end up advertising the VPN address.
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+nodeIP:
+  validSubnets:
+    - 192.168.1.0/24
+---
+cluster:
+  etcd:
+    advertisedSubnets:
+      - 192.168.1.0/24

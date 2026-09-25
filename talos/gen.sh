@@ -10,6 +10,8 @@ talosctl gen config sakuya https://sakuya.kinoko.house:6443 \
   --config-patch @patches/install.yaml \
   --config-patch @patches/hostname.yaml \
   --config-patch @patches/storage.yaml \
+  --config-patch @patches/node-ip.yaml \
+  --config-patch @<(sops decrypt patches/netbird.sops.yaml) \
   --config-patch-control-plane @patches/single-node.yaml \
   --with-docs=false --with-examples=false --force -o .
 talosctl validate --mode metal --strict -c controlplane.yaml
