@@ -18,6 +18,13 @@ spec:
       # since deleting a CRD deletes every Certificate/Issuer with it.
       enabled: true
       keep: true
+    # DNS-01 self-check over DoH. The LAN router intercepts all :53 traffic
+    # (even queries addressed to Porkbun's nameservers) and negatively caches
+    # "no TXT" for the SOA minimum (1800s), so a plain-DNS self-check can stall
+    # for 30 min. DoH (443) goes around it and sees the real public zone.
+    extraArgs:
+      - --dns01-recursive-nameservers-only
+      - --dns01-recursive-nameservers=https://1.1.1.1/dns-query
 ---
 # DNS-01 solver for Porkbun (cert-manager has no built-in Porkbun support).
 # It runs as an extension API server that cert-manager calls with
