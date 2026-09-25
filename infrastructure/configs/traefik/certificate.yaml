@@ -10,6 +10,6 @@ spec:
   secretName: sakuya-wildcard-tls
   issuerRef:
     kind: ClusterIssuer
-    name: letsencrypt-staging
+    name: letsencrypt-prod
   dnsNames:
     - "*.sakuya.kinoko.house"
