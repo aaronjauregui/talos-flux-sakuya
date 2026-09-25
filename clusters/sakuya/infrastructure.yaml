@@ -8,8 +8,9 @@ spec:
   retryInterval: 1m
   path: ./infrastructure/controllers
   prune: true
-  # DEMO: wait off, so "Ready" means "applied", not "installed".
-  wait: false
+  # Ready only once everything applied is healthy (HelmReleases installed),
+  # so infra-configs can't race the CRDs. Without it, "Ready" = "applied".
+  wait: true
   timeout: 5m
   sourceRef:
     kind: GitRepository
