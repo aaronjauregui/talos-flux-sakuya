@@ -36,6 +36,11 @@ spec:
           static_configs:
             - targets: [localhost:8429]
 
+        # So satori can tell when the in-cluster vmalert is down (its up == 0).
+        - job_name: vmalert
+          static_configs:
+            - targets: [vmalert-victoria-metrics-alert-server.monitoring.svc:8880]
+
         - job_name: kube-state-metrics
           static_configs:
             - targets: [kube-state-metrics.monitoring.svc:8080]
