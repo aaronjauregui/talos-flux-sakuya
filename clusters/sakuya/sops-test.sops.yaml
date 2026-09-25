@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: sops-test
+    namespace: default
+stringData:
+    message: ENC[AES256_GCM,data:0L99yTklaFAQA9IJ1RXUFpf4S2SBZT5QNnPRb5xPXtQCmAk=,iv:G+eQPolzCZkx0dGOWe5Kslc22eaHso4UcIbeg/kfZPY=,tag:f71ICtJ/ORVQ+VWaW5h+fw==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2S0RSaTIyU09JTHRYNGg4
+            bHNKSlRMRHBKNEVUVkJtUUF2MGllOHZEYUZJCmg1Vnp0Q1VvYVJDY1RiSFMwRS9V
+            cHhkdzRYTjBmeG95KyttVE9pMjhxU3cKLS0tIDZzN2JpclE3eUEwQkQ0bmdvanRH
+            RTFYNm55bGpibzZOR3N0MUtxMUVnTEkKI9LCz+KTGrgLIopROFkjurlVd+3YJq7d
+            lIQ5v6P9WxWGG5xIe9PesStK6Cptu1jdhDpQYlYUVH5yn0xEs1aAnQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1wc25hzukg6m707hyp7xll3nmv4sg6gtxvql7x3jr4qrp3u7ykf6qreqjc4
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-09-25T03:55:41Z"
+    mac: ENC[AES256_GCM,data:XkrPJKR+de88aprLewWo824n7dnqoquQYcCkzJS3lc/mf0UBQ1bOIpZHYHMKUdfWObe37CUGKBZ+YC5mWHmwDjNKOZbIKGgAetIzpRfdhzb+iO5ujvfvzDDvvuyONawCMIuEzk15ZF+vaY78sh1s7RSdCtRigvc+460E9gYZJgs=,iv:KVDeSPXpJ0PPEI0Th5K2/JcJEOCeZlHUIV4wGx/frIo=,tag:b/cSbMON5f9HREkuM0K8CQ==,type:str]
+    version: 3.13.3

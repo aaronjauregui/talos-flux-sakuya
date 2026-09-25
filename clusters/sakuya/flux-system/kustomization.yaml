@@ -1,5 +1,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- gotk-components.yaml
-- gotk-sync.yaml
+  - gotk-components.yaml
+  - gotk-sync.yaml
+patches:
+  # Decrypt *.sops.yaml files with the age key in the "sops-age" Secret.
+  # That Secret is created by hand (never in git): the key that decrypts the
+  # repo can't live encrypted inside the repo.
+  - patch: |
+      - op: add
+        path: /spec/decryption
+        value:
+          provider: sops
+          secretRef:
+            name: sops-age
+    target:
+      kind: Kustomization
+      name: flux-system
