@@ -37,3 +37,9 @@ spec:
       spec:
         # Deliver to the local pod without SNAT: apps see the real client IP.
         externalTrafficPolicy: Local
+        # sakuya's NetBird IP (wt0, from the Talos netbird extension): kube-proxy
+        # then catches :80/:443 on it just like on the LAN LB IP. Public DNS
+        # (Porkbun) points here; the LAN router points at .230. (The chart has
+        # no top-level service.externalIPs; spec is passed through verbatim.)
+        externalIPs:
+          - 100.81.132.122
