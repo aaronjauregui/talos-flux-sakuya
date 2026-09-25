@@ -1,6 +1,5 @@
 # Adds ONE more week to weeks.json. Not idempotent: a retry after a successful
 # save would add a second week, so it only retries failures before the save.
-# suspend: true until the desktop crontab line is removed (cutover).
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -13,7 +12,7 @@ spec:
   startingDeadlineSeconds: 3600  # node down at run time -> still run if back within 1h
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
-  suspend: true
+  suspend: false
   jobTemplate:
     spec:
       backoffLimit: 2
