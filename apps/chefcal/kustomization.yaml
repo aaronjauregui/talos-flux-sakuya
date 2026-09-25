@@ -5,3 +5,5 @@ resources:
   - namespace.yaml
   - config.sops.yaml
   - pvc.yaml
+  - cronjob-generate.yaml
+  - cronjob-push.yaml

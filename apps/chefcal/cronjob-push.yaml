@@ -1,0 +1,45 @@
+# Reconciles the Nextcloud calendar to weeks.json. Idempotent: safe to retry.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: chefcal-push
+  namespace: chefcal
+spec:
+  schedule: "15 7 * * 5"
+  timeZone: Australia/Sydney
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600  # node down at run time -> still run if back within 1h
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  suspend: false
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      activeDeadlineSeconds: 600
+      template:
+        spec:
+          restartPolicy: Never  # a failure makes a new pod (counted by backoffLimit)
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
+            seccompProfile: {type: RuntimeDefault}
+          containers:
+            - name: chefcal
+              image: nitori.kinoko.house:3000/aaron/chefcal:33e64ba
+              args: [-config, /etc/chefcal/config.yaml, -push]
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: [ALL]}
+              resources:
+                requests: {cpu: 10m, memory: 32Mi}
+                limits: {memory: 128Mi}
+              volumeMounts:
+                - {name: config, mountPath: /etc/chefcal, readOnly: true}
+                - {name: data, mountPath: /data}
+          volumes:
+            - name: config
+              secret: {secretName: chefcal-config}
+            - name: data
+              persistentVolumeClaim: {claimName: chefcal-data}
