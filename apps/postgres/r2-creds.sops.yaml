@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Secret
 metadata:
     name: r2-creds
-    namespace: pg-demo
+    namespace: postgres
 stringData:
     ACCESS_KEY_ID: ENC[AES256_GCM,data:X/HbnM3V+HVJVF7pe9zkYw4w/cXlSjeG2MuyvpBuLKM=,iv:K1ieC6q3esQLLqVf95NfOPUz/Yo61TufhhelZINSTrE=,tag:WyUaNK48hiIG7PAqCXZc6Q==,type:str]
     ACCESS_SECRET_KEY: ENC[AES256_GCM,data:MZOjeNs53RHVhfktAcHoaoMYcWepY6pUwfj18bi6YhLhNFQYGuJdqL8IvAFE9XcFMHuMuKcU/NdxuRxt73XkKA==,iv:OcG8Tj7Y6j0VdTJZBsdQx/wEOpWx1peEwse7eBhlxtY=,tag:xepsTwNGg5dCYTGpbY+QOQ==,type:str]
@@ -19,6 +19,6 @@ sops:
             -----END AGE ENCRYPTED FILE-----
           recipient: age1wc25hzukg6m707hyp7xll3nmv4sg6gtxvql7x3jr4qrp3u7ykf6qreqjc4
     encrypted_regex: ^(data|stringData)$
-    lastmodified: "2026-09-25T08:13:41Z"
-    mac: ENC[AES256_GCM,data:4d9hLE6QVP4d7Ut/XVsNl72SlSXEHIohvTA53+k5OtlCmcru+ObdBwyvx15InGNLVzL4ZNPpUdgCm0/uIDafY2qt94mXeGLy8HBkEtlJOveTblsx6cxnYb2jzziqZ+xnc+E8maFs+1XKFHKgmnzDRsJ9bJBzEsSLk6DN/Om849g=,iv:3+a+S55Q3MbFZ1+ZqQI/MrA6KJAlYfWi/BtO08E+E2I=,tag:yICiLA0T9Nftkl0hHQd8YA==,type:str]
+    lastmodified: "2026-09-25T08:31:54Z"
+    mac: ENC[AES256_GCM,data:K2T7t6e9GsnWQqRNDU+L75SC5BJRQHMbAg8zBTEnmUzWw/7lQ1M8FI5SyL+/qn82dn0wIIodVai5IeOdvVO794GMzCpkoWTJ3ICR/Bawfe816iZVPBPYOlSjec3NmQz5GhYTTI3LN/VRK2sfjCJxz9JoHOptk0UvqvX57nhw6Rc=,iv:HflYrgEfu+e9+u7lHcfew50x1KUQZ1agmD7wKwrQozg=,tag:VyYKYt79CLHRoK924hhhVw==,type:str]
     version: 3.13.3

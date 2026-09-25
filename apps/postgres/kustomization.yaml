@@ -6,4 +6,3 @@ resources:
   - objectstore.yaml
   - cluster.yaml
   - scheduledbackup.yaml
-  - restore.yaml

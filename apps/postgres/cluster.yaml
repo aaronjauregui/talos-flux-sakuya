@@ -1,10 +1,11 @@
-# Playground Postgres for learning CNPG (failover, backups). Two instances on
-# one node is not HA; it's here to watch the operator promote a replica.
+# General-purpose Postgres for homelab apps, and the reference config for CNPG
+# + backups to R2. Two instances on one node survive a pod/Postgres failure
+# (replica promoted in ~1s), not a node failure.
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: pg-demo
-  namespace: pg-demo
+  name: pg-main
+  namespace: postgres
 spec:
   instances: 2
   storage:
@@ -12,7 +13,7 @@ spec:
   bootstrap:
     initdb:
       database: app
-      owner: app  # operator generates the password into Secret pg-demo-app
+      owner: app  # operator generates the password into Secret pg-main-app
   # Ship WAL continuously to the ObjectStore (the plugin runs as a sidecar in
   # each instance pod).
   plugins:

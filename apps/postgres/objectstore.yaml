@@ -1,10 +1,10 @@
-# Where pg-demo's backups go: base backups + WAL in the R2 bucket, under
+# Where pg-main's backups go: base backups + WAL in the R2 bucket, under
 # s3://sakuya-cnpg/<cluster name>/. Read by the barman-cloud plugin.
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
   name: r2
-  namespace: pg-demo
+  namespace: postgres
 spec:
   retentionPolicy: 7d
   configuration:

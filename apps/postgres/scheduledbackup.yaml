@@ -3,14 +3,14 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: pg-demo-daily
-  namespace: pg-demo
+  name: pg-main-daily
+  namespace: postgres
 spec:
   schedule: "0 0 3 * * *"
   immediate: true  # also take one as soon as this is created
   backupOwnerReference: self
   cluster:
-    name: pg-demo
+    name: pg-main
   method: plugin
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
