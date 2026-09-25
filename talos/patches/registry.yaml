@@ -1,0 +1,9 @@
+# Forgejo's container registry on nitori is plain HTTP (no TLS on nitori yet).
+# containerd only speaks HTTPS unless a mirror endpoint says otherwise.
+# name must match the registry part of the image ref, port included.
+apiVersion: v1alpha1
+kind: RegistryMirrorConfig
+name: nitori.kinoko.house:3000
+endpoints:
+  - url: http://nitori.kinoko.house:3000
+skipFallback: true
