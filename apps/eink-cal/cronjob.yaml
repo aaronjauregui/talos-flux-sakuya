@@ -28,7 +28,7 @@ spec:
             seccompProfile: {type: RuntimeDefault}
           containers:
             - name: eink-cal
-              image: nitori.kinoko.house:3000/aaron/eink-cal:94cf208
+              image: nitori.kinoko.house:3000/aaron/eink-cal:94bd83e
               envFrom:
                 - secretRef: {name: eink-cal-env}
               env:
