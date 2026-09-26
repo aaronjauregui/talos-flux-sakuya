@@ -26,7 +26,7 @@ spec:
             seccompProfile: {type: RuntimeDefault}
           containers:
             - name: chefcal
-              image: nitori.kinoko.house:3000/aaron/chefcal:33e64ba
+              image: nitori.kinoko.house:3000/aaron/chefcal:0a720e0
               args: [-config, /etc/chefcal/config.yaml, -push]
               securityContext:
                 allowPrivilegeEscalation: false
