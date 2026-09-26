@@ -28,9 +28,13 @@ spec:
             seccompProfile: {type: RuntimeDefault}
           containers:
             - name: eink-cal
-              image: nitori.kinoko.house:3000/aaron/eink-cal:b5e8656
+              image: nitori.kinoko.house:3000/aaron/eink-cal:b10f895
               envFrom:
                 - secretRef: {name: eink-cal-env}
+              env:
+                # Stateless: each run is a new pod, so the fallback cache could
+                # never be read back. A failed weather fetch = no weather for one run.
+                - {name: WEATHER_CACHE, value: ""}
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
