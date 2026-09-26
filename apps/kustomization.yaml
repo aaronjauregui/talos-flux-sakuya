@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - chefcal
   - eink-cal
+  - forgejo-runner
   - postgres
   - whoami

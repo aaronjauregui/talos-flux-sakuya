@@ -1,0 +1,33 @@
+# forgejo-runner v13 config. @UUID@ is filled in at pod start from the
+# kappa-token Secret (the UUID is derived from the secret's first 16 chars,
+# so it doesn't belong in git either).
+log:
+  level: info
+runner:
+  capacity: 1          # one job at a time: single node, shared with pg-main
+  timeout: 1h
+  shutdown_timeout: 5m
+  fetch_timeout: 30s
+  fetch_interval: 5s
+  envs:
+    # Lets job steps use `docker` against genbu (same netns via network: host).
+    DOCKER_HOST: tcp://localhost:2376
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: /certs/client
+  labels:
+    - docker:docker://node:22-bookworm
+    - kappa:docker://node:22-bookworm
+cache:
+  enabled: true
+container:
+  # "host" here is genbu's host: the pod's network namespace.
+  network: host
+  options: -v /certs/client:/certs/client
+  valid_volumes:
+    - /certs/client
+server:
+  connections:
+    nitori:
+      url: http://nitori.kinoko.house:3000/
+      uuid: "@UUID@"
+      token_url: file:/secret/token

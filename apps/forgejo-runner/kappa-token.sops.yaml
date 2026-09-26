@@ -1,0 +1,24 @@
+# Offline registration secret, registered on nitori with
+# `forgejo forgejo-cli actions register --name kappa --scope aaron`.
+apiVersion: v1
+kind: Secret
+metadata:
+    name: kappa-token
+stringData:
+    token: ENC[AES256_GCM,data:lUXTZ7lBm3WMtv3SsYNL2IwGY84xipGNZ8EUrmkekG8dGKLhc4qEUQ==,iv:IWtGiKgK2n/pkmFpUeXeCCz7cvbUCC00CpIBsmV5KsI=,tag:XlKv/c822GChmHwVsqDV3Q==,type:str]
+    uuid: ENC[AES256_GCM,data:1j+xh+pphGd/8Hol9CUdOCAiUFd6O0DB5xGWALsxPtNjlyjO,iv:3X3eFMx2DqQivnZjRla0uSdP6rr9gXjp37NZYviY9m0=,tag:hKb4tks5c2L3uqLXGfHO0A==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBsWHdXZFBzcDlFYU9ScUpQ
+            aGF6MkNXVVM4TFdIbmErcWRlQWp2WU9TMzBNCmhhV09uTXRGYXozRGp1djlHeTlr
+            Sis3WXpZMi9ucndLYVZEVWlPOE05Z2cKLS0tIFljU2tiR3hIRXZYdjRBaXg5Y2dF
+            d1hGSkVISnAxbUhOMm1CU0dnTStqT1kK+RmqrTDlVGmvMQFhf1JajoqYOtFT740S
+            FkbiwB29pHeaY624VX5pexNHEt7pRyjRAd8OG1KQlMwekILWXP8Xmg==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1wc25hzukg6m707hyp7xll3nmv4sg6gtxvql7x3jr4qrp3u7ykf6qreqjc4
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-09-26T04:57:41Z"
+    mac: ENC[AES256_GCM,data:wh0SMQRfPK4SESknlotLMfQF7QJ6+X7ysWD8TIxGSBUwm3CHdZRmAk//mZy92Sz9CtQnPp1It1mxR6bsbdUHtJHzN6q8hT/kx9sYvBjvgV0M8nU8mewHKNnd2wQDoQVxFPuVD6uP7CyAF0mtIsYX3K4YMEzoJORpbMBDm+onNjk=,iv:kaJhMrtZhE8zi7MSvLv3wXRCC+nTghMKog5Ail6h0NM=,tag:nYNKFO8zi1hzlZTz+JLAuA==,type:str]
+    version: 3.13.3

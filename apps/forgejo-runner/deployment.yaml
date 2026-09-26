@@ -1,0 +1,112 @@
+# One kappa (forgejo-runner) + genbu (its Docker daemon, DinD).
+#
+#   kappa  unprivileged; polls nitori for jobs, drives genbu over TLS :2376
+#   genbu  privileged dockerd; job containers run *inside* it, so its
+#          resources are the budget for all jobs combined
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kappa
+  labels:
+    app.kubernetes.io/name: forgejo-runner
+spec:
+  replicas: 1
+  # One runner identity: never let an old and a new pod poll as the same kappa.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: forgejo-runner
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: forgejo-runner
+    spec:
+      # Jobs run arbitrary code; they get no Kubernetes API credentials.
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+        - name: render-config
+          image: code.forgejo.org/forgejo/runner:13.2.0
+          command: [sh, -c]
+          args:
+            - sed "s/@UUID@/$(cat /secret/uuid)/" /config/config.yaml > /data/config.yaml
+          securityContext: &restricted
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - { name: config, mountPath: /config }
+            - { name: secret, mountPath: /secret }
+            - { name: data, mountPath: /data }
+        # Native sidecar (restartPolicy: Always): starts before kappa, and kappa
+        # only starts once the startupProbe sees dockerd listening.
+        - name: genbu
+          image: docker.io/library/docker:29.8.1-dind
+          restartPolicy: Always
+          args:
+            - --insecure-registry=nitori.kinoko.house:3000  # plain-HTTP Forgejo registry
+            - --mtu=1450                                    # pod network is flannel VXLAN
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: /certs
+          securityContext:
+            privileged: true
+          startupProbe:
+            tcpSocket:
+              port: 2376
+            periodSeconds: 2
+            failureThreshold: 60
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              memory: 6Gi
+          volumeMounts:
+            - { name: certs, mountPath: /certs }
+            - { name: docker, mountPath: /var/lib/docker }
+      containers:
+        - name: kappa
+          image: code.forgejo.org/forgejo/runner:13.2.0
+          command: [forgejo-runner, --config, /data/config.yaml, daemon]
+          workingDir: /data
+          env:
+            - { name: HOME, value: /data }
+            - { name: DOCKER_HOST, value: tcp://localhost:2376 }
+            - { name: DOCKER_TLS_VERIFY, value: "1" }
+            - { name: DOCKER_CERT_PATH, value: /certs/client }
+          securityContext: *restricted
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          volumeMounts:
+            - { name: certs, mountPath: /certs, readOnly: true }
+            - { name: secret, mountPath: /secret }
+            - { name: data, mountPath: /data }
+      volumes:
+        - name: config
+          configMap:
+            name: kappa-config
+        - name: secret
+          secret:
+            secretName: kappa-token
+            defaultMode: 0440
+        - name: data
+          emptyDir: {}
+        - name: certs
+          emptyDir: {}
+        # Images and build cache. Gone on pod restart (a cold cache, not data loss).
+        - name: docker
+          emptyDir:
+            sizeLimit: 20Gi

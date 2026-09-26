@@ -1,0 +1,8 @@
+# Forgejo Actions runners ("kappas": Nitori's workers). Privileged because the
+# genbu sidecar is a Docker daemon (DinD); see deployment.yaml.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kappa
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
