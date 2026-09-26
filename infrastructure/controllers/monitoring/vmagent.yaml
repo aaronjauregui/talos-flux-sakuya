@@ -82,6 +82,24 @@ spec:
               action: keep
               regex: container_(cpu_usage_seconds_total|memory_working_set_bytes|cpu_cfs_(throttled_)?periods_total|network_(receive|transmit)_bytes_total|oom_events_total)
 
+        # TLS endpoints probed from the outside via blackbox-exporter: the target
+        # goes in ?target=, the scrape itself goes to the exporter.
+        - job_name: blackbox
+          metrics_path: /probe
+          params:
+            module: [http_2xx]
+          static_configs:
+            - targets:
+                - https://gustaf.kinoko.house/status.php   # lego on gustaf
+                - https://whoami.sakuya.kinoko.house/      # cert-manager wildcard
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: blackbox-exporter.monitoring.svc:9115
+
         # CloudNativePG instances expose Postgres metrics on the port named "metrics" (9187).
         - job_name: cnpg
           kubernetes_sd_configs:

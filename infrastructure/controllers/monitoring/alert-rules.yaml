@@ -64,3 +64,23 @@ groups:
         labels: {severity: warning}
         annotations:
           summary: "{{ $labels.namespace }}/{{ $labels.cnpg_cluster }}: no replica is streaming from the primary"
+
+  - name: sakuya-certificates
+    rules:
+      # lego (gustaf) and cert-manager (sakuya) both renew with ~30 days left on
+      # a 90-day cert, retrying daily. Under 21 days = renewal has been failing
+      # for over a week. Revisit if Let's Encrypt lifetimes shrink (45 days).
+      - alert: CertificateExpiringSoon
+        expr: (probe_ssl_earliest_cert_expiry{cluster="sakuya",job="blackbox"} - time()) / 86400 < 21
+        for: 1h
+        labels: {severity: warning}
+        annotations:
+          summary: "{{ $labels.instance }}: certificate expires in {{ $value | humanize }} days"
+      # An expired or untrusted cert fails the TLS handshake, and then there is
+      # no expiry metric at all, so the rule above goes quiet. This one doesn't.
+      - alert: EndpointProbeFailing
+        expr: probe_success{cluster="sakuya",job="blackbox"} == 0
+        for: 15m
+        labels: {severity: warning}
+        annotations:
+          summary: "{{ $labels.instance }}: probe failing (down, or TLS invalid)"
