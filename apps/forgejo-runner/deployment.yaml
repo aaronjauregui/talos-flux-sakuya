@@ -51,9 +51,20 @@ spec:
         - name: genbu
           image: docker.io/library/docker:29.8.1-dind
           restartPolicy: Always
+          # A privileged container sees the node's root cgroup at /sys/fs/cgroup,
+          # and the dind script treats that as its own: it would put job
+          # containers at /docker/<id> on the node, outside this pod's limits.
+          # Bind our own cgroup over it so jobs nest under genbu.
+          command: [sh, -c]
           args:
-            - --insecure-registry=nitori.kinoko.house:3000  # plain-HTTP Forgejo registry
-            - --mtu=1450                                    # pod network is flannel VXLAN
+            - |
+              self=$(cut -d: -f3 /proc/self/cgroup)
+              mount --bind "/sys/fs/cgroup$self" /sys/fs/cgroup
+              exec dockerd-entrypoint.sh \
+                --insecure-registry=nitori.kinoko.house:3000 \
+                --mtu=1450
+              # --insecure-registry: Forgejo registry is plain HTTP
+              # --mtu: pod network is flannel VXLAN (1450)
           env:
             - name: DOCKER_TLS_CERTDIR
               value: /certs
